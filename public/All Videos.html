@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html>
+
+    <head>
+        <title>All KripVids</title>
+        <meta charset="utf-8">
+        <meta http-equiv="Access-Control-Allow-Origin" content="*">
+        <meta http-equiv="X-UA-Compatible" content="IE-edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="/css/TopNav.css">
+        <link rel="stylesheet" href="css/style.css">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-lightbox/0.7.0/bootstrap-lightbox.min.css">
+        <link rel="stylesheet" href="https://www.w3schools.com/w3css/3/w3.css">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway">
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-lightbox/0.7.0/bootstrap-lightbox.min.js"></script>
+    </head>
+
+
+    <body>
+
+        <div id="NavElementList" class="topnav">
+            <a href="index.html">Skip The Kripp</a>
+            <a class="select" href="All Videos.html">All The Videos</a>
+            <a href="Missing Timestamps.html">Jobs For Skipperino</a>
+            <a href="#about">About</a>
+
+            <span class="border"></span>
+            <a href="javascript:void(0);" style="font-size:15px;" class="icon" onclick="myFunction()">&#9776;</a>
+        </div>
+
+
+        </div>
+
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <center>
+                        <font color="black">
+                            <h1 class="w3-jumbo w3-animate-top">Skip the Kripp</h1>
+
+                        </font>
+                    </center>
+
+                    <select id="selectSort" class="inline title1" onchange="SetArraySort()">
+                            <option value="Date">Upload Date</option>
+                            <option value="Name">Name</option>
+                            <option value="Skip Seconds">Skip Seconds</option>
+                        </select>
+
+                    <button class="title1 inline" type="button" name="button" onclick="ChangeButtonImage()">
+                      <div id="arrow-updown" class="arrow-down"></div>
+                  </button>
+
+                </div>
+            </div>
+        </div>
+
+        <div id="myModal" class="modal fade" role="dialog">
+            <div class="modal-dialog modal-lg">
+
+                <!-- Modal content-->
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 id="modalHeader" class="modal-title">Modal Header</h4>
+                    </div>
+
+                    <div class="modal-body">
+                        <!-- 1. The <iframe> (and video player) will replace this <div> tag. -->
+                        <div class="video-wrapper">
+                            <div id="player" class="youtubevideo"></div>
+
+                        </div>
+
+                        <script>
+                        var isFirstTime = false;
+                        var vidID;
+                        var vidSTART;
+
+                        function FirstTimeLoadVideo(videoID, videoSTART) { // 2. This code loads the IFrame Player API code asynchronously.
+                            isFirstTime = true;
+
+                            vidID = videoID;
+                            vidSTART = videoSTART;
+
+                            var tag = document.createElement('script');
+
+                            tag.src = "https://www.youtube.com/iframe_api";
+                            var firstScriptTag = document.getElementsByTagName('script')[0];
+                            firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+                            // 3. This function creates an <iframe> (and YouTube player)
+                            //    after the API code downloads.
+                            var player;
+
+
+                        }
+
+                        function onYouTubeIframeAPIReady() {
+                            player = new YT.Player('player', {
+                                width: '100%',
+                                height: '100%',
+                                playerVars: {
+                                    start: vidSTART,
+                                },
+                                videoId: vidID,
+                                events: {
+                                    'onReady': onPlayerReady,
+                                }
+                            });
+                        }
+
+                        // 4. The API will call this function when the video player is ready.
+                        function onPlayerReady(event) {
+                            event.target.playVideo();
+                            console.log(document.getElementById("player").parentNode.clientWidth);
+                        }
+
+                        // 5. The API calls this function when the player's state changes.
+                        //    The function indicates that when playing a video (state=1),
+                        //    the player should play for six seconds and then stop.
+                        var done = false;
+
+
+
+                        function stopVideo() {
+                            player.stopVideo();
+                        }
+
+                        $('#myModal').on('hidden.bs.modal', function() {
+                            stopVideo();
+                        })
+
+                        var currentVideoIndex;
+
+                        function ToggleNextVideo() {
+                            if (currentVideoIndex >= 0) {
+                                currentVideoIndex--;
+                            }
+                            var tempSkipSeconds = videoInfo[currentVideoIndex].skipSeconds;
+                            if (tempSkipSeconds === -1) {
+                                tempSkipSeconds++;
+                            }
+                            var wrapper = $(".video-wrapper");
+                            wrapper.toggleClass("nxtVid", true);
+                            player.loadVideoById(videoInfo[currentVideoIndex].id, tempSkipSeconds, "default");
+                            wrapper[0].addEventListener("webkitAnimationEnd", function() {
+                                wrapper.toggleClass("nxtVid", false);
+                            });
+                        }
+
+                        function TogglePrevVideo() {
+                            if (currentVideoIndex <= videoInfo.length) {
+                                currentVideoIndex++;
+                            }
+                            var tempSkipSeconds = videoInfo[currentVideoIndex].skipSeconds;
+                            if (tempSkipSeconds === -1) {
+                                tempSkipSeconds++;
+                            }
+                            var wrapper = $(".video-wrapper");
+                            wrapper.toggleClass("prvVid", true);
+                            player.loadVideoById(videoInfo[currentVideoIndex].id, tempSkipSeconds, "default");
+                            wrapper[0].addEventListener("webkitAnimationEnd", function() {
+                                wrapper.toggleClass("prvVid", false);
+                            });
+                        }
+
+                        </script>
+                    </div>
+                    <div class="modal-footer">
+                        <center>
+                            <button onclick="TogglePrevVideo()" type="button" class="btn btn-default">Prev</button>
+                            <button onclick="ToggleNextVideo()" type="button" class="btn btn-default">Next</button>
+                        </center>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <main>
+            <div class="container">
+
+                <div class="row" id="videoContainer">
+                    <!--
+          <div class="col-lg-2 col-md-3 col-sm-4 col-xs-12 bg-success">
+              <div class="thumbnail">
+                  <a href="">
+                      <img src="https://img.youtube.com/vi/JVJvNjKl6sY/hqdefault.jpg" class="img-responsive" width="304" height="236" >
+                      <div class="caption">
+                          <p class="captionText">[Hearthstone] Challengestone Bahamgjkljkyftughgfdjdjfcghvgcfxdzszdxfcghvgcfxtdas!</p>
+                      </div>
+                  </a>
+
+              </div>
+          </div>
+        -->
+
+                </div>
+            </div>
+
+        </main>
+
+        <script>
+        var xs = 12;
+        var sm = 4;
+        var md = 4;
+        var lg = 3;
+        var divClasss = "col-lg-" + lg + " col-md-" + md + " col-sm-" + sm + " col-xs-" + xs /*+ " bg-success"*/ ;
+
+        var newurl = "info.json"; // Change this
+        var videoInfo = new Array();
+
+
+        loadJSON(newurl, function(response) {
+            videoInfo = JSON.parse(response);
+            SetArraySort();
+            for (var i = 0; i < videoInfo.length; i++) {
+                AddVideo(videoInfo[i].id, videoInfo[i].name, tempI);
+            }
+        });
+
+        function AddVideo(videoId, videoName, videoIndex) {
+            var row = document.getElementById("videoContainer");
+            var tempDiv = document.createElement("div");
+            tempDiv.setAttribute("class", divClasss /* + " " + RandomColor()*/ );
+            tempDiv.setAttribute("onclick", "StartModalVideo(this," + tempI + ")");
+            tempI++;
+            var tempThumbnail = document.createElement("div");
+            tempThumbnail.setAttribute("class", "thumbnail");
+            var tempLink = document.createElement("a");
+            tempLink.setAttribute("class", "col-lg-12");
+            tempLink.setAttribute("href", "http://www.youtube.com/watch?v=" + videoId); //insert link to skipkrip homepage at that video
+            tempLink.setAttribute("data-toggle", "modal");
+            tempLink.setAttribute("data-target", "#myModal")
+            var tempImg = document.createElement("img");
+            tempImg.setAttribute("src", "https://img.youtube.com/vi/" + videoId + "/mqdefault.jpg")
+            tempImg.setAttribute("class", "img-responsive")
+            tempImg.setAttribute("style", "width:100%")
+            tempImg.setAttribute("width", "304");
+            tempImg.setAttribute("height", "236");
+            var tempCaption = document.createElement("div");
+            tempCaption.setAttribute("class", "caption");
+            var tempCaptionParagraph = document.createElement("p");
+            tempCaptionParagraph.setAttribute("class", "captionText");
+            tempCaptionParagraph.innerHTML = videoName;
+            tempCaption.appendChild(tempCaptionParagraph);
+            tempLink.appendChild(tempImg);
+            tempLink.appendChild(tempCaption);
+            tempLink.appendChild(tempCaption);
+            tempThumbnail.appendChild(tempLink);
+            tempDiv.appendChild(tempThumbnail);
+            row.appendChild(tempDiv);
+        }
+
+        function loadJSON(url, callback) {
+            var xobj = new XMLHttpRequest();
+            xobj.overrideMimeType("application/json");
+            xobj.open('GET', url, true); // Replace 'my_data' with the path to your file
+            xobj.onreadystatechange = function() {
+                if (xobj.readyState == 4 && xobj.status == "200") {
+                    // Required use of an anonymous callback as .open will NOT return a value but simply returns undefined in asynchronous mode
+                    callback(xobj.responseText);
+                }
+            };
+            xobj.send(null);
+        }
+
+        function RandomColor() {
+            var colors = new Array();
+            colors.push("bg-primary");
+            colors.push("bg-success");
+            colors.push("bg-info");
+            colors.push("bg-warning");
+            colors.push("bg-danger");
+            colors.push("bg-inverse");
+            colors.push("bg-faded");
+            return colors[Math.floor((Math.random() * 4))];
+        }
+
+        function SetArraySort() {
+            tempI = 0;
+
+            var type = document.getElementById("selectSort").value;
+            SortArray(videoInfo, type);
+            var myNode = document.getElementById("videoContainer");
+            while (myNode.firstChild) {
+                myNode.removeChild(myNode.firstChild);
+            }
+            if (isAscending) {
+                videoInfo.reverse();
+            }
+            for (var i = 0; i < videoInfo.length; i++) {
+                AddVideo(videoInfo[i].id, videoInfo[i].name);
+            }
+        }
+
+        function FlipOrderOfVideos() {
+            tempI = 0;
+            isAscending = !isAscending;
+            videoInfo.reverse();
+            var myNode = document.getElementById("videoContainer");
+            while (myNode.firstChild) {
+                myNode.removeChild(myNode.firstChild);
+            }
+            for (var i = 0; i < videoInfo.length; i++) {
+                AddVideo(videoInfo[i].id, videoInfo[i].name);
+            }
+        }
+
+        function ChangeButtonImage() {
+            FlipOrderOfVideos();
+            var divImg = document.getElementById("arrow-updown");
+
+            if (divImg.className == "arrow-up") {
+                divImg.setAttribute("class", "arrow-down");
+            }
+            else {
+                divImg.setAttribute("class", "arrow-up");
+            }
+        }
+
+        function StartModalVideo(clickedElement, videoIndex) {
+            currentVideoIndex = videoIndex;
+            document.getElementById("modalHeader").innerHTML = videoInfo[videoIndex].name;
+            var tempSkipSeconds = videoInfo[videoIndex].skipSeconds;
+            if (tempSkipSeconds === -1) {
+                tempSkipSeconds++;
+            }
+            if (!isFirstTime) {
+                FirstTimeLoadVideo(videoInfo[videoIndex].id, tempSkipSeconds);
+
+            }
+            else {
+                player.loadVideoById(videoInfo[videoIndex].id, tempSkipSeconds, "default");
+
+            }
+        }
+
+        </script>
+
+        <script src="js/Sorting.js"></script>
+        <script src="js/TopNav.js"></script>
+        <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+
+
+    </body>
+
+</html>

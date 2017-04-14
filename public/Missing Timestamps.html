@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="Access-Control-Allow-Origin" content="*">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="css/style.css">
+        <link rel="stylesheet" href="https://www.w3schools.com/w3css/3/w3.css">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway">
+        <link rel="stylesheet" href="/css/TopNav.css">
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+
+    </head>
+
+
+    <body>
+        <div id="NavElementList" class="topnav">
+            <a href="index.html">Skip The Kripp</a>
+            <a href="All Videos.html">All The Videos</a>
+            <a class="select" href="Missing Timestamps.html">Jobs For Skipperino</a>
+            <a href="#about">About</a>
+
+            <span class="border"></span>
+            <a href="javascript:void(0);" style="font-size:15px;" class="icon" onclick="myFunction()">&#9776;</a>
+
+        </div>
+
+        <center>
+
+
+            <script>
+            function myFunction() {
+                var x = document.getElementById("myTopnav");
+                if (x.className === "topnav") {
+                    x.className += " responsive";
+                }
+                else {
+                    x.className = "topnav";
+                }
+            }
+
+            </script>
+
+            <title>Jobs for Skipperino</title>
+            <font color="white">
+                <h1 class="w3-jumbo w3-animate-top">Jobs for Skipperino</h1>
+        </center>
+
+        <center>
+            <p id="topParagraph"></p>
+
+        </center>
+
+        <ul style="list-style-type:none" id="list">
+
+        </ul>
+
+        <script>
+        var newurl = "info.json"; // Change this
+        var missingTimeStampList = new Array();
+
+        FindMissingTimestamps();
+
+        function FindMissingTimestamps() {
+            loadJSON(newurl, function(response) {
+
+                // Parse JSON string into object
+                var tempVidInfo = JSON.parse(response);
+                console.log(tempVidInfo[0].id);
+                for (var i = 0; i < tempVidInfo.length; i++) {
+                    if (tempVidInfo[i].skipSeconds == -1) {
+                        missingTimeStampList.push(tempVidInfo[i]);
+                    }
+                }
+                SetHTMLList();
+                var textToSkip = "If Skipperino is here could you add timestamps to the " + missingTimeStampList.length + " videos below.";
+                console.log(textToSkip);
+                document.getElementById("topParagraph").innerHTML = textToSkip;
+
+            });
+        }
+
+
+        function SetHTMLList() {
+
+            // Create the list element:
+            var list = document.getElementById("list");
+
+            for (var i = 0; i < missingTimeStampList.length; i++) {
+                item = document.createElement('li');
+                link = document.createElement('a');
+                link.innerHTML = missingTimeStampList[i].name;
+                link.setAttribute('title', missingTimeStampList[i].name);
+                link.setAttribute('href', "https://www.youtube.com/watch?v=" + missingTimeStampList[i].id);
+                link.setAttribute('target', "_blank");
+                item.appendChild(link);
+                list.appendChild(item);
+            }
+        }
+
+
+        function loadJSON(url, callback) {
+            var xobj = new XMLHttpRequest();
+            xobj.overrideMimeType("application/json");
+            xobj.open('GET', url, true); // Replace 'my_data' with the path to your file
+            xobj.onreadystatechange = function() {
+                if (xobj.readyState == 4 && xobj.status == "200") {
+                    // Required use of an anonymous callback as .open will NOT return a value but simply returns undefined in asynchronous mode
+                    callback(xobj.responseText);
+                }
+            };
+            xobj.send(null);
+        }
+
+        </script>
+
+        <script src="js/TopNav.js"></script>
+        <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+        <script async src="js/analytics&ads.js"></script>
+
+
+    </body>
+
+
+</html>
