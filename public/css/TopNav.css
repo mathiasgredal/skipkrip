@@ -22,6 +22,9 @@
     display: block;
     text-align: left;
   }
+  span.border{
+    display: none;
+  }
 }
 
 
