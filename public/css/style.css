@@ -63,7 +63,6 @@ margin-left: 1%;
 #myTopnav > a{
   text-decoration: none;
 }
-rsync -arv --progress -e "ssh -i ~/.ssh/id_rsa_kripp.pub" skipkrip root@gred.al:/var/www/mathias.gred.al/
 
 .arrow-up{
 width: 0;

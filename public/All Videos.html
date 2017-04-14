@@ -15,7 +15,7 @@
         <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway">
         <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-lightbox/0.7.0/bootstrap-lightbox.min.js"></script>
+
     </head>
 
 
@@ -96,7 +96,6 @@
                             //    after the API code downloads.
                             var player;
 
-
                         }
 
                         function onYouTubeIframeAPIReady() {
@@ -133,6 +132,13 @@
                         $('#myModal').on('hidden.bs.modal', function() {
                             stopVideo();
                         })
+
+                        $(document).keyup(function(e) {
+                            if (e.keyCode == 27) { // escape key maps to keycode `27`
+                                stopVideo();
+                                $('#myModal').modal('toggle');
+                            }
+                        });
 
                         var currentVideoIndex;
 
@@ -218,9 +224,7 @@
         loadJSON(newurl, function(response) {
             videoInfo = JSON.parse(response);
             SetArraySort();
-            for (var i = 0; i < videoInfo.length; i++) {
-                AddVideo(videoInfo[i].id, videoInfo[i].name, tempI);
-            }
+
         });
 
         function AddVideo(videoId, videoName, videoIndex) {
@@ -299,6 +303,7 @@
         }
 
         function FlipOrderOfVideos() {
+
             tempI = 0;
             isAscending = !isAscending;
             videoInfo.reverse();
